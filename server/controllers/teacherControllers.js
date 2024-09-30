@@ -1,8 +1,10 @@
+import { Teacher } from "../modals/teacherModal.js";
+
 // Get all teachers
 async function getAllTeachers(req, res) {
   try {
-    // const teachers = await Teacher.find().populate("assignedClass");
-    res.json({ message: "Teacher fetched" });
+    const teachers = await Teacher.find();
+    res.status(200).json({ message: "Teacher fetched", teachers });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -10,10 +12,10 @@ async function getAllTeachers(req, res) {
 
 // Add new teacher
 async function createTeacher(req, res) {
-  // const newTeacher = new Teacher(req.body);
   try {
-    // const savedTeacher = await newTeacher.save();
-    res.json({ message: "Teacher created" });
+    const newTeacher = req.body;
+    const savedTeacher = await Student.create(newTeacher);
+    res.status(201).json({ message: "Teacher created", savedTeacher });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -22,12 +24,12 @@ async function createTeacher(req, res) {
 // Update teacher
 async function updateTeacher(req, res) {
   try {
-    // const updatedTeacher = await Teacher.findByIdAndUpdate(
-    //   req.params.id,
-    //   req.body,
-    //   { new: true }
-    // );
-    res.json({ message: "Teacher updated" });
+    const updatedTeacher = await Teacher.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.status(201).json({ message: "Teacher updated", updatedTeacher });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -36,7 +38,7 @@ async function updateTeacher(req, res) {
 // Delete teacher
 async function deleteTeacher(req, res) {
   try {
-    // await Teacher.findByIdAndDelete(req.params.id);
+    await Teacher.findByIdAndDelete(req.params.id);
     res.json({ message: "Teacher deleted" });
   } catch (err) {
     res.status(400).json({ error: err.message });
