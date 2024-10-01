@@ -1,10 +1,23 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import ClassPage from "./pages/ClassPage";
+import DetailsPage from "./pages/DetailsPage";
+import TablePage from "./pages/TablePage";
+import HomePage from "./pages/HomePage";
+
 function App() {
   return (
-    <>
-      <p className="text-4xl">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <BrowserRouter>
+      <div className="flex gap-3">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/:role/:id" element={<DetailsPage />} />
+          <Route path="/:role" element={<TablePage />} />
+          <Route path="/class" element={<ClassPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
