@@ -6,32 +6,45 @@ import {
   Select as ChakaraSelect,
   Checkbox,
 } from "@chakra-ui/react";
+import useFetchAllTeachers from "../services/teacherApi/getAllTeachers";
+import useFetchAllStudents from "../services/studentApi/getAllStudents";
+import useFetchAllClasses from "../services/classApi/getAllClasses";
+import useCreateTeacher from "../services/teacherApi/createTeacher";
 
 const Form = ({ type }) => {
   const [formData, setFormData] = useState({});
+  const { data: teacher, isLoading: teacherLoading } = useFetchAllTeachers();
+  const { data: student, isLoading: studentLoading } = useFetchAllStudents();
+  const { data: classes, isLoading: classLoading } = useFetchAllClasses();
+  const { mutate: Teacher, isPending: creatingTeacher } = useCreateTeacher();
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [checked, setChecked] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData({
       ...formData,
       [name]: value, // Handle checkbox separately
-      fees: checked,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = { ...formData, students: selectedStudents };
-    console.log("Form Data:", data);
+    if (type === "class") {
+      const data = { ...formData, students: selectedStudents };
+      console.log("Class Data:", data);
+    } else if (type === "teacher") {
+      const data = { ...formData };
+      Teacher(data);
+      console.log("teacher Data:", data);
+    } else if (type === "student") {
+      const data = { ...formData, feesPaid: checked };
+      console.log("teacher Data:", data);
+    }
     // Submit form data to backend (API call can be made here)
   };
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
+  const options = student?.data?.students.map((student) => {
+    return { value: student._id, label: student.name };
+  });
 
   return (
     <div className="shadow-xl rounded-lg">
@@ -40,7 +53,7 @@ const Form = ({ type }) => {
       </h1>
       <form className="p-2 space-y-2 w-[350px]" onSubmit={handleSubmit}>
         <Input
-          name={type === "class" ? "classname" : "name"}
+          name={"name"}
           focusBorderColor="violet"
           placeholder={type === "class" ? "Enter Classname" : "Enter Name"}
           _placeholder={{ color: "violet" }}
@@ -58,17 +71,17 @@ const Form = ({ type }) => {
               onChange={handleChange}
             />
             <ChakaraSelect
-              placeholder="Gender"
               onChange={handleChange}
               focusBorderColor="pink.100"
               name="gender"
-              defaultValue="male"
             >
-              <option value="male">Male</option>
+              <option value="male" selected>
+                Male
+              </option>
               <option value="female">Female</option>
             </ChakaraSelect>
             <Input
-              name="D.O.B"
+              name="dob"
               placeholder="Select Date"
               onChange={handleChange}
               type="date"
@@ -77,46 +90,33 @@ const Form = ({ type }) => {
           </>
         )}
 
-        <ChakaraSelect
-          placeholder="Select Class"
-          onChange={handleChange}
-          focusBorderColor="pink.100"
-          name="class"
-        >
-          <option value="class1">class 1</option>
-          <option value="class2">Option 2</option>
-          <option value="option3">Option 3</option>
-        </ChakaraSelect>
-        {type === "student" && (
-          <div>
-            <Checkbox
-              onChange={() => setChecked(!checked)}
-              type="checkbox"
-              colorScheme="red"
-              value={checked}
-              name="fees"
-            >
-              Fees Paid
-            </Checkbox>
-          </div>
-        )}
-        {type === "teacher" && (
-          <Input
-            name="salary"
-            type="number"
-            focusBorderColor="violet"
-            placeholder="Enter Salary"
-            _placeholder={{ color: "violet" }}
-            onChange={handleChange}
-          />
-        )}
         {type === "class" && (
           <>
+            <ChakaraSelect
+              placeholder="Select Teacher"
+              onChange={handleChange}
+              focusBorderColor="pink.100"
+              name="name"
+            >
+              {teacher?.data?.teachers?.map((teacher) => (
+                <option key={teacher._id} value={teacher._id}>
+                  {teacher.name}
+                </option>
+              ))}
+            </ChakaraSelect>
             <Input
-              name="fees"
+              name="studentFees"
               type="number"
               focusBorderColor="violet"
               placeholder="Enter Fees"
+              _placeholder={{ color: "violet" }}
+              onChange={handleChange}
+            />
+            <Input
+              name="year"
+              type="text"
+              focusBorderColor="violet"
+              placeholder="Enter year"
               _placeholder={{ color: "violet" }}
               onChange={handleChange}
             />
@@ -129,9 +129,59 @@ const Form = ({ type }) => {
             />
           </>
         )}
+        {type === "student" && (
+          <div>
+            <ChakaraSelect
+              placeholder="select class"
+              onChange={handleChange}
+              focusBorderColor="pink.100"
+              name="class"
+            >
+              {classes?.data?.classes.map((cl) => (
+                <option key={cl._id} value={cl._id}>
+                  {cl.name}
+                </option>
+              ))}
+            </ChakaraSelect>
+            <Checkbox
+              onChange={() => setChecked(!checked)}
+              type="checkbox"
+              colorScheme="red"
+              value={checked}
+              name="fees"
+            >
+              Fees Paid
+            </Checkbox>
+          </div>
+        )}
+        {type === "teacher" && (
+          <>
+            <ChakaraSelect
+              placeholder="select class"
+              onChange={handleChange}
+              focusBorderColor="pink.100"
+              name="assignedClass"
+            >
+              {classes?.data?.classes.map((cl) => (
+                <option key={cl._id} value={cl._id}>
+                  {cl.name}
+                </option>
+              ))}
+            </ChakaraSelect>
+            <Input
+              name="salary"
+              type="number"
+              focusBorderColor="violet"
+              placeholder="Enter Salary"
+              _placeholder={{ color: "violet" }}
+              onChange={handleChange}
+            />
+          </>
+        )}
+
         <Button
-          isLoading={false}
-          isDisabled={false}
+          isLoading={creatingTeacher}
+          isDisabled={creatingTeacher}
           colorScheme="pink"
           className="capitalize"
           loadingText="Submiting..."

@@ -25,7 +25,7 @@ async function getTeacher(req, res) {
 async function createTeacher(req, res) {
   try {
     const newTeacher = req.body;
-    const savedTeacher = await Student.create(newTeacher);
+    const savedTeacher = await Teacher.create(newTeacher);
     res.status(201).json({ message: "Teacher created", savedTeacher });
   } catch (err) {
     res.status(400).json({ error: err.message });

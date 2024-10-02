@@ -14,12 +14,22 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import useFetchAllTeachers from "../services/teacherApi/getAllTeachers";
+import useFetchAllStudents from "../services/studentApi/getAllStudents";
 
 const ContentPage = () => {
   const { role } = useParams();
   const { data: teacher, isLoading, isError, error } = useFetchAllTeachers();
+  const {
+    data: student,
+    isLoading: studentLoading,
+    isError: studentError,
+    error: studenterror,
+  } = useFetchAllStudents();
   const navigate = useNavigate();
-  console.log(teacher);
+
+  if (isLoading || studentLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="w-full">
@@ -36,41 +46,81 @@ const ContentPage = () => {
           Add {role}
         </Button>
       </div>
-      <TableContainer className="mx-auto lg:w-[600px]">
+      <TableContainer className="mx-auto lg:w-max">
         <Table variant="simple">
           <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th>D.O.B</Th>
-              <Th>Fees Paid</Th>
-              <Th>Action</Th>
-            </Tr>
+            {role === "student" && (
+              <Tr>
+                <Th>Name</Th>
+                <Th>D.O.B</Th>
+                <Th>Fees Paid</Th>
+                <Th>Action</Th>
+              </Tr>
+            )}
+            {role === "teacher" && (
+              <Tr>
+                <Th>Name</Th>
+                <Th>D.O.B</Th>
+                <Th>salary</Th>
+                <Th>Action</Th>
+              </Tr>
+            )}
           </Thead>
           <Tbody>
-            <Tr>
-              <Td
-                onClick={() => navigate(`/${role}/1`)}
-                className="underline text-blue-500 capitalize cursor-pointer"
-              >
-                inches
-              </Td>
-              <Td>millimetres (mm)</Td>
-              <Td>25.4</Td>
-              <Td className="space-x-2">
-                <IconButton
-                  colorScheme="yellow"
-                  size={"sm"}
-                  aria-label="Search database"
-                  icon={<MdCreate />}
-                />
-                <IconButton
-                  colorScheme="red"
-                  aria-label="delete"
-                  icon={<FaTrash />}
-                  size={"sm"}
-                />
-              </Td>
-            </Tr>
+            {role === "teacher" &&
+              teacher?.data?.teachers.map((teacher) => (
+                <Tr key={teacher._id}>
+                  <Td
+                    onClick={() => navigate(`/${role}/${teacher._id}`)}
+                    className="underline text-blue-500 capitalize cursor-pointer"
+                  >
+                    {teacher.name}
+                  </Td>
+                  <Td>{teacher.dob.split("T")[0]}</Td>
+                  <Td>{teacher.salary}</Td>
+                  <Td className="space-x-2">
+                    <IconButton
+                      colorScheme="yellow"
+                      size={"sm"}
+                      aria-label="Search database"
+                      icon={<MdCreate />}
+                    />
+                    <IconButton
+                      colorScheme="red"
+                      aria-label="delete"
+                      icon={<FaTrash />}
+                      size={"sm"}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            {role === "student" &&
+              student?.data?.students.map((student) => (
+                <Tr key={student._id}>
+                  <Td
+                    onClick={() => navigate(`/${role}/${student._id}`)}
+                    className="underline text-blue-500 capitalize cursor-pointer"
+                  >
+                    {student.name}
+                  </Td>
+                  <Td>{student.dob.split("T")[0]}</Td>
+                  <Td>{student.feesPaid ? "Yes" : "No"}</Td>
+                  <Td className="space-x-2">
+                    <IconButton
+                      colorScheme="yellow"
+                      size={"sm"}
+                      aria-label="Search database"
+                      icon={<MdCreate />}
+                    />
+                    <IconButton
+                      colorScheme="red"
+                      aria-label="delete"
+                      icon={<FaTrash />}
+                      size={"sm"}
+                    />
+                  </Td>
+                </Tr>
+              ))}
           </Tbody>
         </Table>
       </TableContainer>

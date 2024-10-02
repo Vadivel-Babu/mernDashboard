@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import AxiosInstance from "../../utils/AxiosInstance";
 
 const createTeacher = async (data) => {
+  console.log(data);
+
   const response = await AxiosInstance.post("/teacher", data);
   console.log(response);
 
