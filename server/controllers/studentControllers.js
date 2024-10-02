@@ -4,9 +4,19 @@ import { Student } from "../modals/studentModal.js";
 async function getAllStudents(req, res) {
   try {
     const students = await Student.find();
-    res.status(200).json({ message: "Student dfetched", students });
+    res.status(200).json({ message: "Student fetched", students });
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+}
+
+async function getStudent(req, res) {
+  try {
+    const student = await Student.findById(req.params.id);
+    if (!student) return res.status(404).json({ message: "Student not found" });
+    res.json({ message: "Student fetched", student });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -45,4 +55,10 @@ async function deleteStudent(req, res) {
   }
 }
 
-export default { getAllStudents, createStudent, updateStudent, deleteStudent };
+export default {
+  getAllStudents,
+  createStudent,
+  updateStudent,
+  deleteStudent,
+  getStudent,
+};

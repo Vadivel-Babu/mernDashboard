@@ -19,7 +19,7 @@ const ContentPage = () => {
   const navigate = useNavigate();
   return (
     <div className="w-full">
-      <Button colorScheme="gray" className="m-2">
+      <Button onClick={() => navigate(-1)} colorScheme="gray" className="m-2">
         Back
       </Button>
       <div className="w-max mx-auto my-2 flex gap-2 items-center">
@@ -44,7 +44,10 @@ const ContentPage = () => {
           </Thead>
           <Tbody>
             <Tr>
-              <Td className="underline text-blue-500 capitalize cursor-pointer">
+              <Td
+                onClick={() => navigate(`/${role}/1`)}
+                className="underline text-blue-500 capitalize cursor-pointer"
+              >
                 inches
               </Td>
               <Td>millimetres (mm)</Td>

@@ -10,6 +10,17 @@ async function getAllTeachers(req, res) {
   }
 }
 
+// Get a single teacher by ID
+async function getTeacher(req, res) {
+  try {
+    const teacher = await Teacher.findById(req.params.id);
+    if (!teacher) return res.status(404).json({ message: "Teacher not found" });
+    res.json({ message: "Teacher fetched", teacher });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 // Add new teacher
 async function createTeacher(req, res) {
   try {
@@ -45,4 +56,10 @@ async function deleteTeacher(req, res) {
   }
 }
 
-export default { getAllTeachers, updateTeacher, createTeacher, deleteTeacher };
+export default {
+  getAllTeachers,
+  updateTeacher,
+  createTeacher,
+  deleteTeacher,
+  getTeacher,
+};
