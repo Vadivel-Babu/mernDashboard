@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import ClassPage from "./pages/ClassPage";
 import DetailsPage from "./pages/DetailsPage";
-import TablePage from "./pages/TablePage";
+import ContentPage from "./pages/ContentPage";
 import HomePage from "./pages/HomePage";
+import AddPersonForm from "./pages/AddPersonForm";
 
 function App() {
   return (
@@ -13,8 +13,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/:role/:id" element={<DetailsPage />} />
-          <Route path="/:role" element={<TablePage />} />
-          <Route path="/class" element={<ClassPage />} />
+          <Route path="/:role/create" element={<AddPersonForm />} />
+          <Route path="/:role" element={<ContentPage />} />
         </Routes>
       </div>
     </BrowserRouter>
