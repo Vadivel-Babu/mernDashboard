@@ -1,5 +1,5 @@
 import express, { json } from "express";
-// import cors from "cors";
+import cors from "cors";
 import classRoutes from "./routes/classRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import "dotenv/config";
@@ -11,7 +11,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 connectDB();
-// app.use(cors({ credentials: true }));
+app.use(cors({ credentials: true }));
 app.use(json());
 
 app.get("/", (req, res) => {

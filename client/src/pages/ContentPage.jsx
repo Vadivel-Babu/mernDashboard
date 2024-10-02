@@ -13,10 +13,14 @@ import {
   TableContainer,
   IconButton,
 } from "@chakra-ui/react";
+import useFetchAllTeachers from "../services/teacherApi/getAllTeachers";
 
 const ContentPage = () => {
   const { role } = useParams();
+  const { data: teacher, isLoading, isError, error } = useFetchAllTeachers();
   const navigate = useNavigate();
+  console.log(teacher);
+
   return (
     <div className="w-full">
       <Button onClick={() => navigate(-1)} colorScheme="gray" className="m-2">
